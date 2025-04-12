@@ -21,15 +21,17 @@ import { toast } from "sonner";
 import { TagSelect } from "./tag-select";
 
 interface Props {
-  id: number;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   data: Task;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function UpdateTaskFormDialog({ id, children, data }: Props) {
-  const [open, setOpen] = useState(false);
+export function UpdateTaskFormDialog({ children, data, open = false, onOpenChange }: Props) {
+  const [openState, setOpenState] = useState(false);
   const [loading, setLoading] = useState(false);
   const [date, setDate] = useState<Date | undefined>(data?.due_date ? new Date(data.due_date) : undefined);
+  const changeOpen = onOpenChange || setOpenState;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     try {
@@ -49,8 +51,8 @@ export function UpdateTaskFormDialog({ id, children, data }: Props) {
         description,
         dueDate: date,
       });
-      setOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["workspace-tasks", id] });
+      changeOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["workspace-tasks", data.workspace_id] });
     } catch (_error) {
       toast.error("Failed to create task");
     } finally {
@@ -59,9 +61,9 @@ export function UpdateTaskFormDialog({ id, children, data }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open || openState} onOpenChange={changeOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent popoverTarget="">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Task</DialogTitle>
           <DialogDescription>Update the task to your liking</DialogDescription>
@@ -75,7 +77,7 @@ export function UpdateTaskFormDialog({ id, children, data }: Props) {
             disabled={loading}
             defaultValue={data.description ?? ""}
           />
-          <TagSelect workspaceId={id} name="tag" />
+          <TagSelect workspaceId={data.workspace_id} name="tag" />
           <Select name="status" defaultValue={data.status} disabled={loading}>
             <SelectTrigger id="status" className="w-full">
               <SelectValue placeholder="Select a status" />

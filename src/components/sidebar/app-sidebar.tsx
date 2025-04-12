@@ -6,6 +6,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 import * as React from "react";
 import { Logo } from "../logo";
 import { Separator } from "../ui/separator";
@@ -17,7 +18,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="p-6 group-data-[state=collapsed]:px-2">
         <div className="flex justify-between items-center gap-2">
-          <Logo className="group-data-[state=collapsed]:[&_span]:hidden" />
+          <Link href="/">
+            <Logo className="group-data-[state=collapsed]:[&_span]:hidden" />
+          </Link>
           <SidebarTrigger className="bg-secondary border -ml-2" />
         </div>
       </SidebarHeader>

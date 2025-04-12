@@ -17,11 +17,25 @@ export function LoginForm() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="john@example.com" name="email" required />
+              <Input
+                id="email"
+                type="email"
+                placeholder="john@example.com"
+                name="email"
+                required
+                defaultValue="demo@demo.com"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="********" name="password" required />
+              <Input
+                id="password"
+                type="password"
+                placeholder="********"
+                name="password"
+                required
+                defaultValue="1234567890"
+              />
             </div>
             <Button type="submit" className="w-full">
               Login

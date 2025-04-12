@@ -1,4 +1,5 @@
 "use client";
+import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/client";
 import { IconLogout } from "@tabler/icons-react";
@@ -21,6 +22,9 @@ export function LayoutHeader() {
         <div className="flex items-center gap-2 px-4 w-full">
           <SidebarTrigger className="-ml-1 md:hidden" />
           <Separator orientation="vertical" className="mr-2 h-4" />
+          <Link href="/" className="md:hidden mx-auto">
+            <Logo />
+          </Link>
           <Nav />
           <AvatarMenu />
         </div>
@@ -44,16 +48,16 @@ function Nav() {
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M14.925 10.125H3.075C1.95 10.125 1.5 10.605 1.5 11.7975V14.8275C1.5 16.02 1.95 16.5 3.075 16.5H14.925C16.05 16.5 16.5 16.02 16.5 14.8275V11.7975C16.5 10.605 16.05 10.125 14.925 10.125Z"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               fill={isListActive ? "#306BFF" : "#94A3B8"}
             />
             <path
               d="M9.675 1.5H3.075C1.95 1.5 1.5 1.98 1.5 3.1725V6.2025C1.5 7.395 1.95 7.875 3.075 7.875H9.675C10.8 7.875 11.25 7.395 11.25 6.2025V3.1725C11.25 1.98 10.8 1.5 9.675 1.5Z"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               fill={isListActive ? "#306BFF" : "#94A3B8"}
             />
           </svg>
@@ -79,76 +83,76 @@ function Nav() {
             <path
               d="M6.66667 1.66666V4.16666"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="1.5"
-              stroke-miterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeMiterlimit="10"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M13.3333 1.66666V4.16666"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="1.5"
-              stroke-miterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeMiterlimit="10"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M2.91667 7.57501H17.0833"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="1.5"
-              stroke-miterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeMiterlimit="10"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M17.5 7.08332V14.1667C17.5 16.6667 16.25 18.3333 13.3333 18.3333H6.66667C3.75 18.3333 2.5 16.6667 2.5 14.1667V7.08332C2.5 4.58332 3.75 2.91666 6.66667 2.91666H13.3333C16.25 2.91666 17.5 4.58332 17.5 7.08332Z"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="1.5"
-              stroke-miterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.5"
+              strokeMiterlimit="10"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M13.0789 11.4167H13.0864"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M13.0789 13.9167H13.0864"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M9.99624 11.4167H10.0037"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M9.99624 13.9167H10.0037"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M6.91192 11.4167H6.91941"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M6.91192 13.9167H6.91941"
               stroke={isCalendarActive ? "#306BFF" : "#94A3B8"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
           Calendar
@@ -169,7 +173,7 @@ function AvatarMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="ml-auto block size-10">
+        <Avatar className="md:ml-auto block size-10">
           <AvatarFallback>A</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>

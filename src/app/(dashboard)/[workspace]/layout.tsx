@@ -27,7 +27,7 @@ export default async function Layout({ children, params }: Props) {
       <div className="flex flex-1 flex-col gap-8 md:gap-14 p-6 md:p-10">
         <WorkspaceInfo name={workspace.name} />
         {children}
-        <NewTaskFormDialog id={workspace.id}>
+        <NewTaskFormDialog workspaceId={workspace.id}>
           <Button size="lg" className="fixed bottom-8 right-8 rounded-full bg-hiro-1 text-white">
             <IconSquareRoundedPlus /> New Task
           </Button>

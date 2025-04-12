@@ -2,6 +2,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { queryClient } from "@/context/tanstack-query-context";
@@ -32,7 +33,8 @@ export function TaskMenu({ data, children }: Props) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <UpdateTaskFormDialog id={Number(data.workspace_id)} data={data}>
+        <DropdownMenuLabel>Task</DropdownMenuLabel>
+        <UpdateTaskFormDialog data={data}>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             <IconEdit />
             Edit

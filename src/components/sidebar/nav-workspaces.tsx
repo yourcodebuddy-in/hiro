@@ -5,27 +5,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
-import { queryClient } from "@/context/tanstack-query-context";
 import { useWorkspaces } from "@/hooks/use-workspaces";
-import { createClient } from "@/lib/supabase/client";
-import { Workspace } from "@/lib/supabase/types";
 import { generateBrightColor } from "@/utils/color";
-import { IconDots, IconSquareRoundedPlus, IconTrash } from "@tabler/icons-react";
+import { IconDots, IconSquareRoundedPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { toast } from "sonner";
 import { Button } from "../ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import { NewWorkspaceDialog } from "../workspaces/new-workspace-dialog";
+import { WorkspaceMenu } from "../workspaces/workspace-menu";
 
 export function NavWorkspaces() {
   const { data: workspaces } = useWorkspaces();
+  const { setOpenMobile } = useSidebar();
 
   return (
     <SidebarGroup>
@@ -38,7 +30,11 @@ export function NavWorkspaces() {
       <SidebarMenu>
         {workspaces?.map((item) => (
           <SidebarMenuItem key={item.id}>
-            <SidebarMenuButton asChild className="text-base font-medium p-4 h-10 justify-between">
+            <SidebarMenuButton
+              asChild
+              className="text-base font-medium p-4 h-10 justify-between"
+              onClick={() => setOpenMobile(false)}
+            >
               <div>
                 <Link className="flex items-center gap-4 w-full" href={`/${item.id}/board`}>
                   <div
@@ -47,40 +43,20 @@ export function NavWorkspaces() {
                   />
                   <span className="truncate group-data-[state=collapsed]:hidden">{item.name}</span>
                 </Link>
-                <WorkspaceMenuButton workspace={item} />
+                <WorkspaceMenu workspace={item}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-fit focus-visible:ring-0 group-data-[state=collapsed]:hidden"
+                  >
+                    <IconDots className="size-4" />
+                  </Button>
+                </WorkspaceMenu>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  );
-}
-
-function WorkspaceMenuButton({ workspace }: { workspace: Workspace }) {
-  async function deleteWorkspace() {
-    const supabase = createClient();
-    const { error } = await supabase.from("workspaces").delete().eq("id", workspace.id).throwOnError();
-    if (error) {
-      toast.error("Failed to delete workspace");
-    } else {
-      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
-    }
-  }
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="w-fit focus-visible:ring-0 group-data-[state=collapsed]:hidden">
-          <IconDots className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" sideOffset={10} side="right">
-        <DropdownMenuLabel>{workspace.name}</DropdownMenuLabel>
-        <DropdownMenuItem onSelect={deleteWorkspace}>
-          <IconTrash />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

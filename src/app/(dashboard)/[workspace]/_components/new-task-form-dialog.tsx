@@ -15,21 +15,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { queryClient } from "@/context/tanstack-query-context";
 import { useUser } from "@/context/user-provider";
 import { TastStatusOptions } from "@/lib/supabase/data";
+import { Tag } from "@/lib/supabase/types";
 import { createTask } from "@/lib/supabase/utils.client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { TagSelect } from "./tag-select";
 
 interface Props {
-  id: number;
-  children: React.ReactNode;
+  workspaceId: number;
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultValues?: {
+    title?: string;
+    description?: string;
+    status?: string;
+    tag?: Tag;
+    date?: Date;
+  };
 }
 
-export function NewTaskFormDialog({ id, children }: Props) {
-  const [open, setOpen] = useState(false);
+export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenChange, defaultValues }: Props) {
+  const [openState, setOpenState] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(defaultValues?.date);
   const { user } = useUser();
+  const changeOpen = onOpenChange || setOpenState;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     try {
@@ -46,12 +57,12 @@ export function NewTaskFormDialog({ id, children }: Props) {
         status,
         title,
         description,
-        workspace: id,
+        workspace: workspaceId,
         dueDate: date,
         userId: user.id,
       });
-      setOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["workspace-tasks", id] });
+      changeOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["workspace-tasks", workspaceId] });
     } catch (_error) {
       toast.error("Failed to create task");
     } finally {
@@ -60,7 +71,7 @@ export function NewTaskFormDialog({ id, children }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open || openState} onOpenChange={changeOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -68,10 +79,22 @@ export function NewTaskFormDialog({ id, children }: Props) {
           <DialogDescription>Add a new task to your workspace</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <Input id="title" name="title" placeholder="Title" disabled={loading} />
-          <Textarea id="description" name="description" placeholder="Description" disabled={loading} />
-          <TagSelect workspaceId={id} name="tag" />
-          <Select name="status" defaultValue="todo" disabled={loading}>
+          <Input id="title" name="title" placeholder="Title" disabled={loading} defaultValue={defaultValues?.title} />
+          <Textarea
+            id="description"
+            name="description"
+            placeholder="Description"
+            disabled={loading}
+            defaultValue={defaultValues?.description}
+          />
+          <TagSelect
+            workspaceId={workspaceId}
+            name="tag"
+            defaultValue={
+              defaultValues?.tag ? { label: defaultValues.tag.name, value: String(defaultValues.tag.id) } : undefined
+            }
+          />
+          <Select name="status" defaultValue={defaultValues?.status ?? "todo"} disabled={loading}>
             <SelectTrigger id="status" className="w-full">
               <SelectValue placeholder="Select a status" />
             </SelectTrigger>

@@ -2,6 +2,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -60,6 +61,7 @@ export function TaskStatusColumnMenu({ status, workspaceId }: Props) {
         <IconDots className="ml-auto text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuLabel className="capitalize">{status}</DropdownMenuLabel>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <IconTransfer className="mr-2" size={16} />

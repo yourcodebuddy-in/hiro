@@ -9,10 +9,11 @@ import { toast } from "sonner";
 interface Props {
   workspaceId: number;
   name: string;
+  defaultValue?: { label: string; value: string };
 }
 
-export function TagSelect({ workspaceId, name }: Props) {
-  const [value, setValue] = useState<{ label: string; value: string } | null>(null);
+export function TagSelect({ workspaceId, name, defaultValue }: Props) {
+  const [value, setValue] = useState<{ label: string; value: string } | null | undefined>(defaultValue);
   const { data, isLoading } = useWorkspaceTags(workspaceId);
   const { user } = useUser();
 
