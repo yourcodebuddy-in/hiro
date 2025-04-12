@@ -60,7 +60,7 @@ export function TagSelect({ workspaceId, name }: Props) {
           "[&_svg]:!fill-muted-foreground [&_svg]:!stroke-muted-foreground [&_svg]:!size-4 [&_svg]:!opacity-50 [&>div]:!pr-3",
         indicatorSeparator: () => "!hidden",
         placeholder: () => "!text-popover-foreground !text-sm",
-        singleValue: () => "!text-sm",
+        singleValue: () => "!text-sm !text-inherit",
         menu: () => "!bg-popover p-1 !rounded-md !border",
         option: () => "!text-popover-foreground hover:!bg-muted !bg-transparent !py-1.5 !px-2 !text-sm rounded-md",
       }}

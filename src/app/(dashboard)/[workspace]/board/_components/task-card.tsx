@@ -1,23 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Separator } from "@/components/ui/separator";
-import { queryClient } from "@/context/tanstack-query-context";
-import { createClient } from "@/lib/supabase/client";
 import { Task } from "@/lib/supabase/types";
 import { generateBrightColor } from "@/utils/color";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconDots } from "@tabler/icons-react";
 import { format } from "date-fns";
 import { useState } from "react";
-import { toast } from "sonner";
-import { UpdateTaskFormDialog } from "../../_components/update-task-form-dialog";
+import { TaskMenu } from "../../_components/task-menu";
 
 interface Props {
   data: Task;
@@ -106,7 +98,11 @@ export function TaskCard({ data }: Props) {
               Due: {data.due_date ? format(new Date(data.due_date), "MMM d, yyyy") : "No due date"}
             </span>
           </div>
-          <TaskCardMenu data={data} />
+          <TaskMenu data={data}>
+            <Button variant="ghost" size="icon" className="absolute top-2 right-2">
+              <IconDots />
+            </Button>
+          </TaskMenu>
         </CardContent>
       </Card>
 
@@ -117,40 +113,5 @@ export function TaskCard({ data }: Props) {
         />
       )}
     </div>
-  );
-}
-
-function TaskCardMenu({ data }: Props) {
-  async function deleteTask() {
-    const supabase = createClient();
-    const { error } = await supabase.from("tasks").delete().eq("id", data.id);
-    if (error) {
-      toast.error("Failed to delete task");
-    }
-    const tasks = queryClient.getQueryData<Task[]>(["workspace-tasks", data.workspace_id]);
-    const filteredTasks = tasks?.filter((task) => task.id !== data.id);
-    queryClient.setQueryData(["workspace-tasks", data.workspace_id], filteredTasks);
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="absolute top-2 right-2">
-          <IconDots />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <UpdateTaskFormDialog id={Number(data.workspace_id)} data={data}>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            <IconEdit />
-            Edit
-          </DropdownMenuItem>
-        </UpdateTaskFormDialog>
-        <DropdownMenuItem onSelect={deleteTask}>
-          <IconTrash />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
