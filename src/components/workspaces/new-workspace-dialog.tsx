@@ -25,7 +25,7 @@ export function NewWorkspaceDialog({ children }: Props) {
       const formData = new FormData(e.target as HTMLFormElement);
       const name = formData.get("name");
       const supabase = createClient();
-      await supabase.from("workspaces").insert({ name, user_id: user.id }).throwOnError();
+      await supabase.from("workspaces").insert({ name, user: user.id }).throwOnError();
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });
       setOpen(false);
     } catch (_error) {

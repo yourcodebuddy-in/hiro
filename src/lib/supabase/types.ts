@@ -1,31 +1,31 @@
 export type Workspace = {
   id: number;
-  name: string;
-  user_id: string;
   created_at: string;
   updated_at: string;
+  name: string;
+  user: string;
 };
 
-export type Tag = {
+export type Category = {
   id: number;
-  created_at: string;
   name: string;
-  user_id: string;
-  workspace_id: string;
+  user: string;
+  workspace: string;
 };
 
 export type TaskStatus = "todo" | "inwork" | "qa" | "completed";
 
 export type Task = {
   id: number;
+  created_at: string;
+  updated_at: string;
   title: string;
   description: string | null;
   status: TaskStatus;
   due_date: string | null;
-  tag: Tag | null;
-  workspace_id: number;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
+  category: Category | null;
+  tag: string | null;
+  workspace: number;
+  user: string;
   position: number;
 };

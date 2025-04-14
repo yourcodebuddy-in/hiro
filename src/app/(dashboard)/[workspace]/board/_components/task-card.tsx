@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Task } from "@/lib/supabase/types";
+import { cn } from "@/lib/utils";
 import { generateBrightColor } from "@/utils/color";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { IconDots } from "@tabler/icons-react";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 import { useState } from "react";
 import { TaskMenu } from "../../_components/task-menu";
 
@@ -16,8 +18,9 @@ interface Props {
 }
 
 export function TaskCard({ data }: Props) {
-  const color = generateBrightColor(data.title);
+  const tagColor = generateBrightColor(data.tag ?? data.title);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(null);
+  const isOverdue = data.due_date && isPast(new Date(data.due_date));
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver, active } = useSortable({
     id: data.id,
@@ -82,21 +85,15 @@ export function TaskCard({ data }: Props) {
             <h4 className="text-md md:text-lg font-semibold">{data.title}</h4>
             <p className="text-sm text-muted-foreground line-clamp-2">{data.description}</p>
             <div className="flex items-center gap-2 mt-2">
-              {data.tag && (
-                <span
-                  className="text-xs px-3 py-1 text-white rounded-md capitalize"
-                  style={{ backgroundColor: color + "30", color }}
-                >
-                  {data.tag.name}
-                </span>
-              )}
+              {data.tag && <Badge style={{ backgroundColor: tagColor + "30", color: tagColor }}>{data.tag}</Badge>}
             </div>
           </div>
           <Separator />
-          <div className="p-4">
-            <span className="text-sm flex items-center gap-1">
+          <div className="p-4 flex items-center justify-between gap-2">
+            <span className={cn("text-sm flex items-center gap-1", isOverdue && "text-destructive")}>
               Due: {data.due_date ? format(new Date(data.due_date), "MMM d, yyyy") : "No due date"}
             </span>
+            {data.category && <Badge variant="outline">{data.category.name}</Badge>}
           </div>
           <TaskMenu data={data}>
             <Button variant="ghost" size="icon" className="absolute top-2 right-2">

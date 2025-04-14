@@ -15,10 +15,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { queryClient } from "@/context/tanstack-query-context";
 import { useUser } from "@/context/user-provider";
 import { TastStatusOptions } from "@/lib/supabase/data";
-import { Tag } from "@/lib/supabase/types";
 import { createTask } from "@/lib/supabase/utils.client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { CategorySelect } from "./category-select";
 import { TagSelect } from "./tag-select";
 
 interface Props {
@@ -30,7 +30,8 @@ interface Props {
     title?: string;
     description?: string;
     status?: string;
-    tag?: Tag;
+    tag?: string;
+    category?: number;
     date?: Date;
   };
 }
@@ -50,16 +51,20 @@ export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenC
       const description = formData.get("description") as string;
       const status = formData.get("status") as string;
       const tag = formData.get("tag") as string;
+      const category = formData.get("category") as string;
+
+      console.log(tag, category);
 
       setLoading(true);
       await createTask({
-        tag: tag ? Number(tag) : null,
         status,
         title,
         description,
         workspace: workspaceId,
         dueDate: date,
         userId: user.id,
+        tag,
+        category: category ? Number(category) : null,
       });
       changeOpen(false);
       queryClient.invalidateQueries({ queryKey: ["workspace-tasks", workspaceId] });
@@ -79,7 +84,14 @@ export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenC
           <DialogDescription>Add a new task to your workspace</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <Input id="title" name="title" placeholder="Title" disabled={loading} defaultValue={defaultValues?.title} />
+          <Input
+            id="title"
+            name="title"
+            placeholder="Title"
+            disabled={loading}
+            defaultValue={defaultValues?.title}
+            required
+          />
           <Textarea
             id="description"
             name="description"
@@ -87,14 +99,9 @@ export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenC
             disabled={loading}
             defaultValue={defaultValues?.description}
           />
-          <TagSelect
-            workspaceId={workspaceId}
-            name="tag"
-            defaultValue={
-              defaultValues?.tag ? { label: defaultValues.tag.name, value: String(defaultValues.tag.id) } : undefined
-            }
-          />
-          <Select name="status" defaultValue={defaultValues?.status ?? "todo"} disabled={loading}>
+          <CategorySelect workspaceId={workspaceId} name="category" defaultValue={defaultValues?.category} />
+          <TagSelect workspaceId={workspaceId} name="tag" defaultValue={defaultValues?.tag} />
+          <Select name="status" defaultValue={defaultValues?.status ?? "todo"} disabled={loading} required>
             <SelectTrigger id="status" className="w-full">
               <SelectValue placeholder="Select a status" />
             </SelectTrigger>

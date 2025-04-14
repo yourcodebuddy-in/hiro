@@ -116,7 +116,7 @@ export default function Page() {
       }
 
       // Create updated task
-      const updatedTask = { ...activeTask, status: targetStatus };
+      const updatedTask = { ...activeTask, status: targetStatus, position: newPosition };
 
       // Find the right index to insert the task
       const insertIndex = localTasks.findIndex(
@@ -139,11 +139,24 @@ export default function Page() {
         }
       }
 
-      // Update local state
+      // Update local state first
       setLocalTasks(updatedLocalTasks);
 
-      // Update backend
+      // Update task in the backend
       await updateTask({ id: activeTask.id, status: targetStatus, position: newPosition });
+
+      // Update positions of all tasks in the target column
+      const tasksToUpdate = updatedLocalTasks
+        .filter((task) => task.status === targetStatus)
+        .map((task, index) => ({
+          ...task,
+          position: index,
+        }));
+
+      // Update all task positions in the backend
+      if (tasksToUpdate.length > 0) {
+        await reorderTasks(tasksToUpdate);
+      }
     } else {
       // If in same column, just reorder
       const overTaskIndex = overTaskId
@@ -152,24 +165,50 @@ export default function Page() {
 
       if (overTaskIndex === -1) return;
 
+      // Check if the position actually changed
+      if (activeTaskIndex === overTaskIndex) {
+        // No change in position, exit early
+        setActiveTask(null);
+        setActiveStatus(null);
+        setActiveId(null);
+        return;
+      }
+
       // Optimistically update the UI
       const newLocalTasks = arrayMove(updatedLocalTasks, activeTaskIndex, overTaskIndex);
+
+      // Check if there are actual changes in positions
+      const hasPositionChanges = newLocalTasks.some((task, index) => {
+        const originalTask = localTasks.find((t) => t.id === task.id);
+        return originalTask && originalTask.position !== index;
+      });
+
+      if (!hasPositionChanges) {
+        // No actual changes in positions
+        setActiveTask(null);
+        setActiveStatus(null);
+        setActiveId(null);
+        return;
+      }
+
       setLocalTasks(newLocalTasks);
 
       // Get updated positions for tasks of this status
       const tasksToUpdate = newLocalTasks
         .filter((task) => task.status === targetStatus)
         .map((task, index) => ({
-          id: task.id,
+          ...task,
           position: index,
         }));
 
       // Update backend
-      await reorderTasks(tasksToUpdate);
+      if (tasksToUpdate.length > 0) {
+        await reorderTasks(tasksToUpdate);
+      }
     }
 
     // Refetch to ensure data consistency
-    queryClient.invalidateQueries({ queryKey: ["workspace-tasks", Number(params.workspace)] });
+    queryClient.invalidateQueries({ queryKey: ["workspace-tasks", workspaceId] });
 
     setActiveTask(null);
     setActiveStatus(null);

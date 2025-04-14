@@ -1,9 +1,11 @@
 import { createClient } from "./client";
+import { Task } from "./types";
 
 interface UpsertTaskProps {
   title: string;
   description?: string | null;
-  tag?: number | null;
+  tag?: string | null;
+  category?: number | null;
   status: string;
   workspace: number;
   dueDate?: Date | null;
@@ -11,7 +13,17 @@ interface UpsertTaskProps {
   userId: string;
 }
 
-export async function createTask({ title, description, tag, status, workspace, dueDate, userId }: UpsertTaskProps) {
+export async function createTask({
+  title,
+  description,
+  tag,
+  category,
+  position,
+  status,
+  workspace,
+  dueDate,
+  userId,
+}: UpsertTaskProps) {
   const supabase = createClient();
   await supabase
     .from("tasks")
@@ -19,9 +31,11 @@ export async function createTask({ title, description, tag, status, workspace, d
       title,
       description,
       tag,
+      category,
+      position,
       status,
-      workspace_id: workspace,
-      user_id: userId,
+      workspace,
+      user: userId,
       due_date: dueDate,
     })
     .throwOnError();
@@ -35,9 +49,11 @@ export async function updateTask({ id, ...rest }: Partial<UpsertTaskProps> & { i
       title: rest.title ?? undefined,
       description: rest.description ?? undefined,
       tag: rest.tag ?? undefined,
+      category: rest.category ?? undefined,
+      position: rest.position ?? undefined,
       status: rest.status ?? undefined,
-      workspace_id: rest.workspace ?? undefined,
-      user_id: rest.userId ?? undefined,
+      workspace: rest.workspace ?? undefined,
+      user: rest.userId ?? undefined,
       due_date: rest.dueDate ?? undefined,
       updated_at: new Date().toISOString(),
     })
@@ -45,11 +61,10 @@ export async function updateTask({ id, ...rest }: Partial<UpsertTaskProps> & { i
     .throwOnError();
 }
 
-export async function reorderTasks(tasks: { id: number; position: number }[]) {
+export async function reorderTasks(tasks: Task[]) {
   const supabase = createClient();
-  const updates = tasks.map(({ id, position }) => ({
-    id,
-    position,
+  const updates = tasks.map((task) => ({
+    ...task,
     updated_at: new Date().toISOString(),
   }));
   await supabase.from("tasks").upsert(updates).throwOnError();

@@ -24,9 +24,9 @@ export function TaskMenu({ data, children }: Props) {
     if (error) {
       toast.error("Failed to delete task");
     }
-    const tasks = queryClient.getQueryData<Task[]>(["workspace-tasks", data.workspace_id]);
+    const tasks = queryClient.getQueryData<Task[]>(["workspace-tasks", data.workspace]);
     const filteredTasks = tasks?.filter((task) => task.id !== data.id);
-    queryClient.setQueryData(["workspace-tasks", data.workspace_id], filteredTasks);
+    queryClient.setQueryData(["workspace-tasks", data.workspace], filteredTasks);
   }
 
   return (

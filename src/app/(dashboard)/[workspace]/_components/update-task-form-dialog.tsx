@@ -18,6 +18,7 @@ import { Task, TaskStatus } from "@/lib/supabase/types";
 import { updateTask } from "@/lib/supabase/utils.client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { CategorySelect } from "./category-select";
 import { TagSelect } from "./tag-select";
 
 interface Props {
@@ -41,18 +42,20 @@ export function UpdateTaskFormDialog({ children, data, open = false, onOpenChang
       const description = formData.get("description") as string;
       const status = formData.get("status") as TaskStatus;
       const tag = formData.get("tag") as string;
+      const category = formData.get("category") as string;
 
       setLoading(true);
       await updateTask({
         id: data.id,
-        tag: tag ? Number(tag) : null,
         status,
         title,
         description,
         dueDate: date,
+        tag,
+        category: category ? Number(category) : null,
       });
       changeOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["workspace-tasks", data.workspace_id] });
+      queryClient.invalidateQueries({ queryKey: ["workspace-tasks", data.workspace] });
     } catch (_error) {
       toast.error("Failed to create task");
     } finally {
@@ -69,7 +72,7 @@ export function UpdateTaskFormDialog({ children, data, open = false, onOpenChang
           <DialogDescription>Update the task to your liking</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <Input id="title" name="title" placeholder="Title" disabled={loading} defaultValue={data.title} />
+          <Input id="title" name="title" placeholder="Title" disabled={loading} defaultValue={data.title} required />
           <Textarea
             id="description"
             name="description"
@@ -77,8 +80,9 @@ export function UpdateTaskFormDialog({ children, data, open = false, onOpenChang
             disabled={loading}
             defaultValue={data.description ?? ""}
           />
-          <TagSelect workspaceId={data.workspace_id} name="tag" />
-          <Select name="status" defaultValue={data.status} disabled={loading}>
+          <CategorySelect workspaceId={data.workspace} name="category" defaultValue={data?.category?.id} />
+          <TagSelect workspaceId={data.workspace} name="tag" defaultValue={data.tag} />
+          <Select name="status" defaultValue={data.status} disabled={loading} required>
             <SelectTrigger id="status" className="w-full">
               <SelectValue placeholder="Select a status" />
             </SelectTrigger>

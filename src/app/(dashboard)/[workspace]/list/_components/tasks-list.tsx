@@ -4,9 +4,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Task } from "@/lib/supabase/types";
-import { generateBrightColor } from "@/utils/color";
+import { cn } from "@/lib/utils";
 import { IconDots } from "@tabler/icons-react";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 import { TaskMenu } from "../../_components/task-menu";
 
 interface Props {
@@ -28,6 +28,7 @@ export function TasksList({ tasks }: Props) {
             <TableHead>Status</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Due Date</TableHead>
+            <TableHead>Category</TableHead>
             <TableHead>Tag</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -38,29 +39,20 @@ export function TasksList({ tasks }: Props) {
                 <TableRow key={task.id}>
                   <TableCell>{task.title}</TableCell>
                   <TableCell>
-                    {
-                      <Badge variant="secondary" className="capitalize px-3 py-1 rounded-md">
-                        {task.status}
-                      </Badge>
-                    }
+                    <Badge
+                      data-status={task.status}
+                      variant="secondary"
+                      className="data-[status=todo]:bg-hiro-1 data-[status=inwork]:bg-hiro-2 data-[status=qa]:bg-hiro-3 data-[status=completed]:bg-hiro-4 text-white capitalize"
+                    >
+                      {task.status}
+                    </Badge>
                   </TableCell>
                   <TableCell>{format(new Date(task.created_at), "MMM d, yyyy")}</TableCell>
-                  <TableCell>{task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "N/A"}</TableCell>
-                  <TableCell>
-                    {task.tag ? (
-                      <span
-                        className="text-xs px-3 py-1 text-white rounded-md capitalize"
-                        style={{
-                          backgroundColor: generateBrightColor(task.title) + "30",
-                          color: generateBrightColor(task.title),
-                        }}
-                      >
-                        {task.tag.name}
-                      </span>
-                    ) : (
-                      "N/A"
-                    )}
+                  <TableCell className={cn(task.due_date && isPast(new Date(task.due_date)) && "text-destructive")}>
+                    {task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "N/A"}
                   </TableCell>
+                  <TableCell>{task.category?.name ?? "N/A"}</TableCell>
+                  <TableCell>{task.tag ?? "N/A"}</TableCell>
                   <TableCell>
                     <TaskMenu data={task}>
                       <Button variant="ghost" size="icon">

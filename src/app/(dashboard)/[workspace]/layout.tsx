@@ -8,9 +8,7 @@ import { WorkspaceInfo } from "./_components/workspace-info";
 
 interface Props {
   children: React.ReactNode;
-  params: {
-    workspace: string;
-  };
+  params: Promise<{ workspace: string }>;
 }
 
 export default async function Layout({ children, params }: Props) {
@@ -25,7 +23,7 @@ export default async function Layout({ children, params }: Props) {
     <div>
       <LayoutHeader />
       <div className="flex flex-1 flex-col gap-8 md:gap-14 p-6 md:p-10">
-        <WorkspaceInfo name={workspace.name} />
+        <WorkspaceInfo id={workspace.id} name={workspace.name} />
         {children}
         <NewTaskFormDialog workspaceId={workspace.id}>
           <Button size="lg" className="fixed bottom-8 right-8 rounded-full bg-hiro-1 text-white">
