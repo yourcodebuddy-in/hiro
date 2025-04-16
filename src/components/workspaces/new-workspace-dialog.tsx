@@ -5,7 +5,13 @@ import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { DialogDescription, DialogTitle } from "../ui/dialog";
+import {
+  DialogOrDrawer,
+  DialogOrDrawerContent,
+  DialogOrDrawerHeader,
+  DialogOrDrawerTrigger,
+} from "../ui/dialog-or-drawer";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
@@ -36,13 +42,13 @@ export function NewWorkspaceDialog({ children }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
+    <DialogOrDrawer open={open} onOpenChange={setOpen}>
+      <DialogOrDrawerTrigger asChild>{children}</DialogOrDrawerTrigger>
+      <DialogOrDrawerContent>
+        <DialogOrDrawerHeader>
           <DialogTitle>Create a workspace</DialogTitle>
           <DialogDescription>Create a workspace to manage your tasks</DialogDescription>
-        </DialogHeader>
+        </DialogOrDrawerHeader>
         <form onSubmit={createWorkspace}>
           <div className="space-y-6">
             <div className="space-y-2">
@@ -54,7 +60,7 @@ export function NewWorkspaceDialog({ children }: Props) {
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DialogOrDrawerContent>
+    </DialogOrDrawer>
   );
 }

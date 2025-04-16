@@ -65,6 +65,7 @@ export default function Page() {
         selectable
       />
       <NewTaskFormDialog
+        key={String(selectedDate)}
         workspaceId={workspaceId}
         open={newOpen}
         onOpenChange={setNewOpen}

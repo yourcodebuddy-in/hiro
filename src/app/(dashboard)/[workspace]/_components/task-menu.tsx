@@ -9,6 +9,7 @@ import { queryClient } from "@/context/tanstack-query-context";
 import { createClient } from "@/lib/supabase/client";
 import { Task } from "@/lib/supabase/types";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { UpdateTaskFormDialog } from "./update-task-form-dialog";
 
@@ -18,6 +19,8 @@ interface Props {
 }
 
 export function TaskMenu({ data, children }: Props) {
+  const [open, setOpen] = useState(false);
+
   async function deleteTask() {
     const supabase = createClient();
     const { error } = await supabase.from("tasks").delete().eq("id", data.id);
@@ -34,17 +37,16 @@ export function TaskMenu({ data, children }: Props) {
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Task</DropdownMenuLabel>
-        <UpdateTaskFormDialog data={data}>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            <IconEdit />
-            Edit
-          </DropdownMenuItem>
-        </UpdateTaskFormDialog>
+        <DropdownMenuItem onSelect={() => setOpen(true)}>
+          <IconEdit />
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={deleteTask}>
           <IconTrash />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
+      <UpdateTaskFormDialog data={data} open={open} onOpenChange={setOpen} />
     </DropdownMenu>
   );
 }

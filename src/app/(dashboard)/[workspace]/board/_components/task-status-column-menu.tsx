@@ -3,6 +3,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -11,15 +12,16 @@ import {
 import { queryClient } from "@/context/tanstack-query-context";
 import { Task, TaskStatus } from "@/lib/supabase/types";
 import { deleteTask, updateTask } from "@/lib/supabase/utils.client";
-import { IconDots, IconTransfer, IconTrash } from "@tabler/icons-react";
+import { IconTransfer, IconTrash } from "@tabler/icons-react";
 import { toast } from "sonner";
 
 interface Props {
   status: TaskStatus;
   workspaceId: number;
+  children?: React.ReactNode;
 }
 
-export function TaskStatusColumnMenu({ status, workspaceId }: Props) {
+export function TaskStatusColumnMenu({ status, workspaceId, children }: Props) {
   async function transferTasks(targetStatus: TaskStatus) {
     const toastId = toast.loading("Transferring tasks...");
     try {
@@ -57,9 +59,7 @@ export function TaskStatusColumnMenu({ status, workspaceId }: Props) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <IconDots className="ml-auto text-muted-foreground" />
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel className="capitalize">{status}</DropdownMenuLabel>
         <DropdownMenuSub>
@@ -67,32 +67,34 @@ export function TaskStatusColumnMenu({ status, workspaceId }: Props) {
             <IconTransfer className="mr-2" size={16} />
             Transfer
           </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            {status !== "todo" && (
-              <DropdownMenuItem onClick={() => transferTasks("todo")}>
-                <span className="block size-2 bg-hiro-1 rounded-full" />
-                Todo
-              </DropdownMenuItem>
-            )}
-            {status !== "inwork" && (
-              <DropdownMenuItem onClick={() => transferTasks("inwork")}>
-                <span className="block size-2 bg-hiro-2 rounded-full" />
-                In Work
-              </DropdownMenuItem>
-            )}
-            {status !== "qa" && (
-              <DropdownMenuItem onClick={() => transferTasks("qa")}>
-                <span className="block size-2 bg-hiro-3 rounded-full" />
-                QA
-              </DropdownMenuItem>
-            )}
-            {status !== "completed" && (
-              <DropdownMenuItem onClick={() => transferTasks("completed")}>
-                <span className="block size-2 bg-hiro-4 rounded-full" />
-                Completed
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuSubContent>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              {status !== "todo" && (
+                <DropdownMenuItem onClick={() => transferTasks("todo")}>
+                  <span className="block size-2 bg-hiro-1 rounded-full" />
+                  Todo
+                </DropdownMenuItem>
+              )}
+              {status !== "inwork" && (
+                <DropdownMenuItem onClick={() => transferTasks("inwork")}>
+                  <span className="block size-2 bg-hiro-2 rounded-full" />
+                  In Work
+                </DropdownMenuItem>
+              )}
+              {status !== "qa" && (
+                <DropdownMenuItem onClick={() => transferTasks("qa")}>
+                  <span className="block size-2 bg-hiro-3 rounded-full" />
+                  QA
+                </DropdownMenuItem>
+              )}
+              {status !== "completed" && (
+                <DropdownMenuItem onClick={() => transferTasks("completed")}>
+                  <span className="block size-2 bg-hiro-4 rounded-full" />
+                  Completed
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuItem onClick={deleteColumn}>
           <IconTrash />

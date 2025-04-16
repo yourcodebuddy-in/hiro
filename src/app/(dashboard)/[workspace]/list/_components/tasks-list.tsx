@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { taskStatusMap } from "@/lib/supabase/data";
 import { Task } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { IconDots } from "@tabler/icons-react";
@@ -11,9 +12,10 @@ import { TaskMenu } from "../../_components/task-menu";
 
 interface Props {
   tasks: Task[] | undefined;
+  isLoading?: boolean;
 }
 
-export function TasksList({ tasks }: Props) {
+export function TasksList({ tasks, isLoading }: Props) {
   return (
     <ScrollArea className="h-[calc(100vh-10rem)]">
       <Table>
@@ -34,35 +36,8 @@ export function TasksList({ tasks }: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tasks
-            ? tasks.map((task) => (
-                <TableRow key={task.id}>
-                  <TableCell>{task.title}</TableCell>
-                  <TableCell>
-                    <Badge
-                      data-status={task.status}
-                      variant="secondary"
-                      className="data-[status=todo]:bg-hiro-1 data-[status=inwork]:bg-hiro-2 data-[status=qa]:bg-hiro-3 data-[status=completed]:bg-hiro-4 text-white capitalize"
-                    >
-                      {task.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{format(new Date(task.created_at), "MMM d, yyyy")}</TableCell>
-                  <TableCell className={cn(task.due_date && isPast(new Date(task.due_date)) && "text-destructive")}>
-                    {task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "N/A"}
-                  </TableCell>
-                  <TableCell>{task.category?.name ?? "N/A"}</TableCell>
-                  <TableCell>{task.tag ?? "N/A"}</TableCell>
-                  <TableCell>
-                    <TaskMenu data={task}>
-                      <Button variant="ghost" size="icon">
-                        <IconDots />
-                      </Button>
-                    </TaskMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            : Array.from({ length: 5 }).map((_, index) => (
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
                     <Skeleton className="h-10 w-full" />
@@ -81,6 +56,43 @@ export function TasksList({ tasks }: Props) {
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-10 w-full" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-10 w-full" />
+                  </TableCell>
+                </TableRow>
+              ))
+            : tasks?.map((task) => (
+                <TableRow key={task.id}>
+                  <TableCell>{task.title}</TableCell>
+                  <TableCell>
+                    <Badge
+                      data-status={task.status}
+                      variant="secondary"
+                      className="data-[status=todo]:bg-hiro-1 data-[status=inwork]:bg-hiro-2 data-[status=qa]:bg-hiro-3 data-[status=completed]:bg-hiro-4 text-white capitalize"
+                    >
+                      {taskStatusMap.get(task.status)?.toUpperCase()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{format(new Date(task.created_at), "MMM d, yyyy")}</TableCell>
+                  <TableCell
+                    className={cn(
+                      task.due_date &&
+                        isPast(new Date(task.due_date)) &&
+                        task.status !== "completed" &&
+                        "text-destructive"
+                    )}
+                  >
+                    {task.due_date ? format(new Date(task.due_date), "MMM d, yyyy") : "N/A"}
+                  </TableCell>
+                  <TableCell>{task.category?.name ?? "N/A"}</TableCell>
+                  <TableCell>{task.tag ?? "N/A"}</TableCell>
+                  <TableCell>
+                    <TaskMenu data={task}>
+                      <Button variant="ghost" size="icon">
+                        <IconDots />
+                      </Button>
+                    </TaskMenu>
                   </TableCell>
                 </TableRow>
               ))}

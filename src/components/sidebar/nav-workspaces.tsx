@@ -11,13 +11,16 @@ import { useWorkspaces } from "@/hooks/use-workspaces";
 import { generateBrightColor } from "@/utils/color";
 import { IconDots, IconSquareRoundedPlus } from "@tabler/icons-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 import { NewWorkspaceDialog } from "../workspaces/new-workspace-dialog";
 import { WorkspaceMenu } from "../workspaces/workspace-menu";
 
 export function NavWorkspaces() {
-  const { data: workspaces } = useWorkspaces();
+  const { data: workspaces, isLoading } = useWorkspaces();
   const { setOpenMobile } = useSidebar();
+  const pathname = usePathname();
 
   return (
     <SidebarGroup>
@@ -34,11 +37,12 @@ export function NavWorkspaces() {
               asChild
               className="text-base font-medium p-4 h-10 justify-between"
               onClick={() => setOpenMobile(false)}
+              isActive={pathname.includes(`/${item.id}/`)}
             >
               <div>
-                <Link className="flex items-center gap-4 w-full" href={`/${item.id}/board`}>
+                <Link className="flex items-center gap-4 flex-1 w-[65%]" href={`/${item.id}/board`}>
                   <div
-                    className="size-2 rounded-full group-data-[state=collapsed]:mx-auto"
+                    className="size-2 aspect-square rounded-full group-data-[state=collapsed]:mx-auto"
                     style={{ backgroundColor: generateBrightColor(item.name) }}
                   />
                   <span className="truncate group-data-[state=collapsed]:hidden">{item.name}</span>
@@ -56,6 +60,12 @@ export function NavWorkspaces() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
+        {isLoading &&
+          Array.from({ length: 3 }).map((_, index) => (
+            <SidebarMenuItem key={index}>
+              <Skeleton className="h-10 w-full" />
+            </SidebarMenuItem>
+          ))}
       </SidebarMenu>
     </SidebarGroup>
   );

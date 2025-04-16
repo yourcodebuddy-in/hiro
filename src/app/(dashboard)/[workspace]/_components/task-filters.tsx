@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useWorkspaceTasks } from "@/hooks/use-workspaces";
 import { IconFilter } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
@@ -18,6 +19,7 @@ export function TaskFilters({ workspaceId }: Props) {
   const [tag, setTag] = useState<string>("all");
   const { categories, tags } = useWorkspaceTasks(workspaceId);
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   function filterTasks() {
     const searchParams = new URLSearchParams();
@@ -32,12 +34,12 @@ export function TaskFilters({ workspaceId }: Props) {
   return (
     <div className="flex justify-end gap-2">
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger>
+        <PopoverTrigger asChild>
           <Button variant="outline">
             <IconFilter /> Filter
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="end">
+        <PopoverContent align={isMobile ? "start" : "end"}>
           <div className="flex flex-col gap-2">
             <Label>Category</Label>
             <Select value={category} onValueChange={setCategory}>

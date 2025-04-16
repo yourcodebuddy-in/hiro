@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { Category, Task, Workspace } from "@/lib/supabase/types";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { useMemo } from "react";
 
 export function useWorkspaces() {
@@ -27,9 +27,9 @@ export function useWorkspaceCategories(id: number) {
 }
 
 export function useWorkspaceTasks(id: number) {
-  const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const tag = searchParams.get("tag");
+  const [status] = useQueryState("status");
+  const [category] = useQueryState("category");
+  const [tag] = useQueryState("tag");
 
   const { data, ...rest } = useQuery({
     queryKey: ["workspace-tasks", id],
@@ -62,13 +62,18 @@ export function useWorkspaceTasks(id: number) {
     },
   });
 
-  const tags = useMemo(() => {
-    return data?.map((task) => task.tag).filter((tag) => tag !== null) ?? [];
-  }, [data]);
-
-  const categories = useMemo(() => {
-    return data?.map((task) => task.category).filter((category) => category !== null) ?? [];
-  }, [data]);
+  const tags = useMemo(() => [...new Set(data?.map((task) => task.tag).filter(Boolean) ?? [])], [data]) as string[];
+  const categories = useMemo(
+    () => [
+      ...new Set(
+        data
+          ?.map((task) => task.category?.id)
+          .filter(Boolean)
+          .map((id) => data.find((task) => task.category?.id === id)?.category) ?? []
+      ),
+    ],
+    [data]
+  ) as Category[];
 
   const filteredData = useMemo(() => {
     let result = data ?? [];
@@ -78,8 +83,11 @@ export function useWorkspaceTasks(id: number) {
     if (tag) {
       result = result.filter((task) => task.tag === tag);
     }
+    if (status) {
+      result = result.filter((task) => task.status === status);
+    }
     return result;
-  }, [data, category, tag]);
+  }, [data, category, tag, status]);
 
   return { data: filteredData, tags, categories, ...rest };
 }

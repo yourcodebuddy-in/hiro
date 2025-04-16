@@ -1,14 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  DialogOrDrawer,
+  DialogOrDrawerContent,
+  DialogOrDrawerHeader,
+  DialogOrDrawerTrigger,
+} from "@/components/ui/dialog-or-drawer";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,7 +50,7 @@ export function UpdateTaskFormDialog({ children, data, open = false, onOpenChang
         title,
         description,
         dueDate: date,
-        tag,
+        tag: tag ? tag : null,
         category: category ? Number(category) : null,
       });
       changeOpen(false);
@@ -64,13 +63,13 @@ export function UpdateTaskFormDialog({ children, data, open = false, onOpenChang
   }
 
   return (
-    <Dialog open={open || openState} onOpenChange={changeOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
+    <DialogOrDrawer open={open || openState} onOpenChange={changeOpen}>
+      <DialogOrDrawerTrigger asChild>{children}</DialogOrDrawerTrigger>
+      <DialogOrDrawerContent>
+        <DialogOrDrawerHeader>
           <DialogTitle>Update Task</DialogTitle>
           <DialogDescription>Update the task to your liking</DialogDescription>
-        </DialogHeader>
+        </DialogOrDrawerHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <Input id="title" name="title" placeholder="Title" disabled={loading} defaultValue={data.title} required />
           <Textarea
@@ -99,7 +98,7 @@ export function UpdateTaskFormDialog({ children, data, open = false, onOpenChang
             Update
           </Button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DialogOrDrawerContent>
+    </DialogOrDrawer>
   );
 }

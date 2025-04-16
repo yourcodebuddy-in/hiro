@@ -6,9 +6,11 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import * as React from "react";
 import { Logo } from "../logo";
+import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { NavWorkspaces } from "./nav-workspaces";
 import { ThemeToggle } from "./theme-toggle";
@@ -29,6 +31,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavWorkspaces />
       </SidebarContent>
       <SidebarFooter className="p-6 group-data-[state=collapsed]:p-2">
+        <Link href="https://youtu.be/DXwZbR5Fz1Y" target="_blank">
+          <Button variant="destructive" className="rounded-full w-full">
+            <IconBrandYoutubeFilled /> <span className="group-data-[state=collapsed]:hidden">Demo</span>
+          </Button>
+        </Link>
         <ThemeToggle />
       </SidebarFooter>
       <SidebarRail />

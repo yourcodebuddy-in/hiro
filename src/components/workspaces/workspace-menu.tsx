@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Workspace } from "@/lib/supabase/types";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function WorkspaceMenu({ children, workspace }: Props) {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
 
   async function deleteWorkspace() {
@@ -33,22 +35,22 @@ export function WorkspaceMenu({ children, workspace }: Props) {
       toast.success("Workspace deleted successfully", { id: toastId });
     }
   }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="start" sideOffset={10} side="right">
         <DropdownMenuLabel>Workspace</DropdownMenuLabel>
-        <EditWorkspaceDialog data={workspace}>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            <IconEdit />
-            Edit
-          </DropdownMenuItem>
-        </EditWorkspaceDialog>
+        <DropdownMenuItem onSelect={() => setOpen(true)}>
+          <IconEdit />
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={deleteWorkspace}>
           <IconTrash />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
+      <EditWorkspaceDialog data={workspace} open={open} onOpenChange={setOpen} />
     </DropdownMenu>
   );
 }

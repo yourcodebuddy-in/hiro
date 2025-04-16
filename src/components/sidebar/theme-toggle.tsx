@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { useSidebar } from "../ui/sidebar";
 
 export function ThemeToggle() {
-  const { resolvedTheme, systemTheme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const { state } = useSidebar();
 
   if (state === "collapsed")
@@ -18,7 +18,7 @@ export function ThemeToggle() {
     );
 
   return (
-    <Tabs defaultValue={resolvedTheme === "system" ? systemTheme : resolvedTheme} onValueChange={setTheme}>
+    <Tabs value={resolvedTheme} onValueChange={setTheme}>
       <TabsList className="w-full rounded-full">
         <TabsTrigger className="rounded-full" value="light">
           <IconMoon className="size-4" /> Light

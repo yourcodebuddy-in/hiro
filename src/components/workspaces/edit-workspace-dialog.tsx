@@ -5,18 +5,27 @@ import { Workspace } from "@/lib/supabase/types";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { DialogDescription, DialogTitle } from "../ui/dialog";
+import {
+  DialogOrDrawer,
+  DialogOrDrawerContent,
+  DialogOrDrawerHeader,
+  DialogOrDrawerTrigger,
+} from "../ui/dialog-or-drawer";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 interface Props {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   data: Workspace;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function EditWorkspaceDialog({ children, data }: Props) {
-  const [open, setOpen] = useState(false);
+export function EditWorkspaceDialog({ children, data, open = false, onOpenChange }: Props) {
+  const [openState, setOpenState] = useState(false);
   const [loading, setLoading] = useState(false);
+  const changeOpen = onOpenChange || setOpenState;
 
   async function updateWorkspace(e: React.FormEvent<HTMLFormElement>) {
     try {
@@ -27,7 +36,7 @@ export function EditWorkspaceDialog({ children, data }: Props) {
       const supabase = createClient();
       await supabase.from("workspaces").update({ name }).eq("id", data.id).throwOnError();
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });
-      setOpen(false);
+      changeOpen(false);
     } catch (_error) {
       toast.error("Failed to update workspace");
     } finally {
@@ -36,13 +45,13 @@ export function EditWorkspaceDialog({ children, data }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
+    <DialogOrDrawer open={open || openState} onOpenChange={changeOpen}>
+      <DialogOrDrawerTrigger asChild>{children}</DialogOrDrawerTrigger>
+      <DialogOrDrawerContent>
+        <DialogOrDrawerHeader>
           <DialogTitle>Edit workspace</DialogTitle>
           <DialogDescription>Edit the workspace to better manage your tasks</DialogDescription>
-        </DialogHeader>
+        </DialogOrDrawerHeader>
         <form onSubmit={updateWorkspace}>
           <div className="space-y-6">
             <div className="space-y-2">
@@ -62,7 +71,7 @@ export function EditWorkspaceDialog({ children, data }: Props) {
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DialogOrDrawerContent>
+    </DialogOrDrawer>
   );
 }

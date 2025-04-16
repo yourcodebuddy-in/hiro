@@ -1,11 +1,10 @@
-import { TaskStatus } from "@/lib/supabase/types";
+import { useQueryState } from "nuqs";
 
-interface Props {
-  status: TaskStatus | "all";
-  setStatus: (status: TaskStatus | "all") => void;
-}
+export function StatusTabs() {
+  const [status, setStatus] = useQueryState("status", {
+    defaultValue: "all",
+  });
 
-export function StatusTabs({ status, setStatus }: Props) {
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-7 items-center relative *:cursor-pointer mb-7 *:aria-disabled:text-muted-foreground *:font-medium">
       <div

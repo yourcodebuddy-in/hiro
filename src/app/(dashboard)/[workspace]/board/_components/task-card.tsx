@@ -20,7 +20,7 @@ interface Props {
 export function TaskCard({ data }: Props) {
   const tagColor = generateBrightColor(data.tag ?? data.title);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(null);
-  const isOverdue = data.due_date && isPast(new Date(data.due_date));
+  const isOverdue = data.due_date && isPast(new Date(data.due_date)) && data.status !== "completed";
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver, active } = useSortable({
     id: data.id,
@@ -73,36 +73,33 @@ export function TaskCard({ data }: Props) {
         />
       )}
 
-      <Card
-        className="p-0 rounded-lg shadow-none cursor-move"
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-        {...listeners}
-      >
+      <Card className="p-0 rounded-lg shadow-none cursor-move" ref={setNodeRef} style={style}>
         <CardContent className="p-0">
-          <div className="p-4">
-            <h4 className="text-md md:text-lg font-semibold">{data.title}</h4>
-            <p className="text-sm text-muted-foreground line-clamp-2">{data.description}</p>
-            <div className="flex items-center gap-2 mt-2">
-              {data.tag && <Badge style={{ backgroundColor: tagColor + "30", color: tagColor }}>{data.tag}</Badge>}
+          <div {...attributes} {...listeners}>
+            <div className="p-4">
+              <h4 className="text-md font-semibold">{data.title}</h4>
+              <p className="text-sm text-muted-foreground line-clamp-2">{data.description}</p>
+              <div className="flex items-center gap-2 mt-2">
+                {data.tag && <Badge style={{ backgroundColor: tagColor + "30", color: tagColor }}>{data.tag}</Badge>}
+              </div>
+            </div>
+            <Separator />
+            <div className="p-4 flex items-center justify-between gap-2">
+              <span className={cn("text-sm flex items-center gap-1", isOverdue && "text-destructive")}>
+                Due: {data.due_date ? format(new Date(data.due_date), "MMM d, yyyy") : "No due date"}
+              </span>
+              {data.category && <Badge variant="outline">{data.category.name}</Badge>}
             </div>
           </div>
-          <Separator />
-          <div className="p-4 flex items-center justify-between gap-2">
-            <span className={cn("text-sm flex items-center gap-1", isOverdue && "text-destructive")}>
-              Due: {data.due_date ? format(new Date(data.due_date), "MMM d, yyyy") : "No due date"}
-            </span>
-            {data.category && <Badge variant="outline">{data.category.name}</Badge>}
+          <div>
+            <TaskMenu data={data}>
+              <Button variant="ghost" size="icon" className="absolute top-2 right-2">
+                <IconDots />
+              </Button>
+            </TaskMenu>
           </div>
-          <TaskMenu data={data}>
-            <Button variant="ghost" size="icon" className="absolute top-2 right-2">
-              <IconDots />
-            </Button>
-          </TaskMenu>
         </CardContent>
       </Card>
-
       {isBeingDraggedOver && dropPosition === "bottom" && (
         <div
           className="absolute bottom-0 left-0 right-0 h-2 bg-blue-500 rounded-full transform translate-y-2 z-10"

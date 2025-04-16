@@ -6,3 +6,10 @@ export const TastStatusOptions: { label: string; value: TaskStatus }[] = [
   { label: "QA", value: "qa" },
   { label: "Completed", value: "completed" },
 ];
+
+export const taskStatusMap = new Map<TaskStatus, string>([
+  ["todo", "To do"],
+  ["inwork", "In work"],
+  ["qa", "QA"],
+  ["completed", "Completed"],
+]);

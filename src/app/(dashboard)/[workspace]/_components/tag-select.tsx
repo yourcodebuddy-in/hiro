@@ -25,7 +25,7 @@ export function TagSelect({ workspaceId, name, defaultValue }: Props) {
         onChange={(e) => setValue(e.target.value)}
       />
       <Select open={open} onOpenChange={setOpen} onValueChange={setValue}>
-        <SelectTrigger className="aspect-square p-2.5 !bg-secondary border-0 *:stroke-primary-foreground *:!opacity-100" />
+        <SelectTrigger className="aspect-square p-2.5 !bg-secondary border-0 *:stroke-secondary-foreground *:!opacity-100" />
         <SelectContent align="end">
           {tags.map((tag, index) => (
             <SelectItem key={`${tag}-${index}`} value={tag}>

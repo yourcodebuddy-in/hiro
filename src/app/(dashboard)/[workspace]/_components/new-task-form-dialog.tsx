@@ -2,13 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  DialogOrDrawer,
+  DialogOrDrawerContent,
+  DialogOrDrawerDescription,
+  DialogOrDrawerHeader,
+  DialogOrDrawerTitle,
+  DialogOrDrawerTrigger,
+} from "@/components/ui/dialog-or-drawer";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,8 +53,6 @@ export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenC
       const tag = formData.get("tag") as string;
       const category = formData.get("category") as string;
 
-      console.log(tag, category);
-
       setLoading(true);
       await createTask({
         status,
@@ -63,7 +61,7 @@ export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenC
         workspace: workspaceId,
         dueDate: date,
         userId: user.id,
-        tag,
+        tag: tag ? tag : null,
         category: category ? Number(category) : null,
       });
       changeOpen(false);
@@ -76,13 +74,13 @@ export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenC
   }
 
   return (
-    <Dialog open={open || openState} onOpenChange={changeOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>New Task</DialogTitle>
-          <DialogDescription>Add a new task to your workspace</DialogDescription>
-        </DialogHeader>
+    <DialogOrDrawer open={open || openState} onOpenChange={changeOpen}>
+      <DialogOrDrawerTrigger asChild>{children}</DialogOrDrawerTrigger>
+      <DialogOrDrawerContent>
+        <DialogOrDrawerHeader>
+          <DialogOrDrawerTitle>New Task</DialogOrDrawerTitle>
+          <DialogOrDrawerDescription>Add a new task to your workspace</DialogOrDrawerDescription>
+        </DialogOrDrawerHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <Input
             id="title"
@@ -118,7 +116,7 @@ export function NewTaskFormDialog({ workspaceId, children, open = false, onOpenC
             Create
           </Button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DialogOrDrawerContent>
+    </DialogOrDrawer>
   );
 }

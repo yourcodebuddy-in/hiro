@@ -1,6 +1,7 @@
 "use client";
 import { queryClient } from "@/context/tanstack-query-context";
 import { useWorkspaceTasks } from "@/hooks/use-workspaces";
+import { taskStatusMap } from "@/lib/supabase/data";
 import { Task, TaskStatus } from "@/lib/supabase/types";
 import { reorderTasks, updateTask } from "@/lib/supabase/utils.client";
 import {
@@ -21,12 +22,10 @@ import { createPortal } from "react-dom";
 import { DroppableColumn } from "./_components/droppable-column";
 import { TaskCard } from "./_components/task-card";
 
-const TASK_STATUS: TaskStatus[] = ["todo", "inwork", "qa", "completed"];
-
 export default function Page() {
   const params = useParams();
   const workspaceId = Number(params.workspace);
-  const { data: tasks } = useWorkspaceTasks(workspaceId);
+  const { data: tasks, isLoading } = useWorkspaceTasks(workspaceId);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeStatus, setActiveStatus] = useState<TaskStatus | null>(null);
   const [localTasks, setLocalTasks] = useState<Task[] | null>(null);
@@ -248,13 +247,14 @@ export default function Page() {
       }}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8 *:space-y-8">
-        {TASK_STATUS.map((status) => (
+        {Array.from(taskStatusMap.keys()).map((status) => (
           <DroppableColumn
             key={status}
             status={status}
             tasks={tasksByStatus[status]}
             activeId={activeId}
             workspaceId={workspaceId}
+            isLoading={isLoading}
           />
         ))}
       </div>

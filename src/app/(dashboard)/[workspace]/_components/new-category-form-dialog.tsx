@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  DialogOrDrawer,
+  DialogOrDrawerContent,
+  DialogOrDrawerHeader,
+  DialogOrDrawerTrigger,
+} from "@/components/ui/dialog-or-drawer";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { queryClient } from "@/context/tanstack-query-context";
 import { useUser } from "@/context/user-provider";
 import { createClient } from "@/lib/supabase/client";
@@ -51,20 +51,31 @@ export function NewCategoryFormDialog({ workspaceId, children }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
+    <DialogOrDrawer open={open} onOpenChange={setOpen}>
+      <DialogOrDrawerTrigger asChild>{children}</DialogOrDrawerTrigger>
+      <DialogOrDrawerContent>
+        <DialogOrDrawerHeader>
           <DialogTitle>New Category</DialogTitle>
           <DialogDescription>Create a new category to organize your tasks.</DialogDescription>
-        </DialogHeader>
-        <div className="flex gap-4">
-          <Input id="name" name="name" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <Button type="button" disabled={loading} loading={loading} onClick={createCategory}>
+        </DialogOrDrawerHeader>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="My Workspace"
+              name="name"
+              required
+              disabled={loading}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <Button className="w-full" type="button" disabled={loading} loading={loading} onClick={createCategory}>
             Create
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </DialogOrDrawerContent>
+    </DialogOrDrawer>
   );
 }

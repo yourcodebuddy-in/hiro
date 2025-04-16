@@ -26,7 +26,7 @@ export default async function Layout({ children, params }: Props) {
         <WorkspaceInfo id={workspace.id} name={workspace.name} />
         {children}
         <NewTaskFormDialog workspaceId={workspace.id}>
-          <Button size="lg" className="fixed bottom-8 right-8 rounded-full bg-hiro-1 text-white">
+          <Button size="lg" className="fixed bottom-8 right-8 rounded-full bg-hiro-1 text-white z-50">
             <IconSquareRoundedPlus /> New Task
           </Button>
         </NewTaskFormDialog>
